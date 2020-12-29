@@ -1,0 +1,12 @@
+1) be sure that you have a png image in the same folder
+2) be sure that the part of the image you will chose is wider than 100px*100px
+3) Run the program 
+4) If you click (left mouse) anywhere on the image, you will determine the upper_left corner of your data
+5) If you click (right mouse) anywhere on the image, you will determine the lower_right corner of your data
+6) now press "p". Be sure that the capslock is not on. The background should turn to green.
+7) now click on the color you want the program to extract.
+8) press "e"
+9) you will see the extracted data on the right side of the screen
+10) if nothing went wrong, press "v". After pressing "v" the drawing on the right side should dissapear and the data is copied
+to your clipboard
+11) close the program
