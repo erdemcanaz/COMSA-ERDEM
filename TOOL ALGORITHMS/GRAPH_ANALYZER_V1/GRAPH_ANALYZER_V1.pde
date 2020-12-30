@@ -231,13 +231,14 @@ int onWhichButton() {
   else return -1;
 }
 String apply_key(String text, int pressed_key) {
-  String return_string ="";
+  String return_string =text;
   if (pressed_key==8) {
-    for (int i=0; i<(text.length()-1); i++) {
+    return_string="";
+    for (int i=0; i<(text.length()-1); i++) {      
       return_string += text.charAt(i);
     }
   } else {
-    return_string=text+String.valueOf((char)pressed_key);
+    if(pressed_key=='.'||(pressed_key>='a' && pressed_key<='z')||(pressed_key>='A' && pressed_key<='Z')||(pressed_key>='0' && pressed_key<='9')) return_string += String.valueOf((char)pressed_key);
   }
   return return_string;
 }
