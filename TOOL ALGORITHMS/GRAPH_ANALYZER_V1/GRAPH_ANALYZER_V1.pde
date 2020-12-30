@@ -10,7 +10,7 @@ PImage background;
 //PRE-INPUT
 int pixel_accuracy_y=1;//px
 int pixel_accuracy_x=1;//px
-int color_accuracy= 10;//0-255 scale
+int color_accuracy= 5;//0-255 scale
 //RUN-TIME INPUT
 int upper_left[] = new int[2]; //x,y
 int lower_right[] = new int[2]; //x,y
@@ -29,10 +29,6 @@ String Y_NAME="";
 String X_MAX="";
 String Y_MAX="";
 boolean IS_PROPER=false;
-
-int NO_INTEGER=0;
-float X_MAX_FLOAT=0;
-float Y_MAX_FLOAT=0;
 //RIGHT MENU
 int which_is_active=-1;
 
@@ -45,9 +41,10 @@ void setup() {
   background = loadImage("background_transparent.png");
   image (f1, 0, 0);
   image(background, 0, 0);
+  calculate_data_name();
 }
 void draw() {  
-  println(mouseX,mouseY);
+ 
   painter();  
 }
 
@@ -73,9 +70,11 @@ void painter() {
   text(NO, 596, 543); 
   text(X_NAME, 660, 543); 
   text(Y_NAME, 780, 543); 
+  text(DATA_NAME, 141,595);
   textSize(9);
   text(X_MAX, 898, 543); 
   text(Y_MAX, 976, 543); 
+  
 
   //RIGHT MENU
   textSize(20);
@@ -83,7 +82,7 @@ void painter() {
   text("("+lower_right[0]+","+lower_right[1]+")", 1000, 473);
   
   fill(picked_color[0],picked_color[1],picked_color[2]);  stroke(picked_color[0],picked_color[1],picked_color[2]);
-  rect(1000,68,95,58);
+  rect(1000,65,95,58);
   
   noFill();
   stroke(0, 255, 0);
@@ -133,7 +132,6 @@ void extract_function_data() {
   }
 }
 boolean compare_color(int x, int y) {
-  picked_color[0]=(int)red(get(x, y));
   if (abs(picked_color[0]-(int)red(get(x, y)))>color_accuracy)return false;
   if (abs(picked_color[1]-(int)green(get(x, y)))>color_accuracy)return false;
   if (abs(picked_color[2]-(int)blue(get(x, y)))>color_accuracy)return false;
@@ -180,7 +178,7 @@ void mouseClicked() {
   else if (clicked_button==12)which_is_active=12;
   else if (clicked_button==13)which_is_active=13;
   else if (clicked_button==14)which_is_active=14;
-  else if (clicked_button==8)IS_PROPER=!IS_PROPER;
+  else if (clicked_button==8){IS_PROPER=!IS_PROPER;calculate_data_name();}
   else if (clicked_button==9)copy_data();
   //ON GRAPH
   else if (clicked_button==0) {
@@ -269,6 +267,6 @@ if(Y_NAME=="")DATA_NAME+="X_";
 else DATA_NAME+= Y_NAME+"_";
 
 if(IS_PROPER)DATA_NAME+="SI";
-else DATA_NAME+= X_NAME+"notSI";
+else DATA_NAME+="notSI";
   
 }
