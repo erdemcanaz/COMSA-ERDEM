@@ -20,14 +20,19 @@ float data[]= new float[105];
 
 int CIRCLE_DIAMETER=3;
 //LOWER MENU
+String DATA_NAME="";
 String NAME ="";
 String SUB_NAME= "";
-int NO= 0;
+String NO= "";
 String X_NAME="";
 String Y_NAME="";
-float X_CONV=0;
-float Y_CONVER=0;
+String X_MAX="";
+String Y_MAX="";
 boolean IS_PROPER=false;
+
+int NO_INTEGER=0;
+float X_MAX_FLOAT=0;
+float Y_MAX_FLOAT=0;
 //RIGHT MENU
 int which_is_active=-1;
 
@@ -41,38 +46,89 @@ void setup() {
   image (f1, 0, 0);
   image(background, 0, 0);
 }
-void draw() {
+void draw() {  
+  println(mouseX,mouseY);
+  painter();  
 }
 
-void copy_data() {
 
+/////////
+void painter() {  
+  //LOWER MENU
+  fill(255); 
+  stroke(255);
+  rect(510, 5, 700, 800);
+  rect(0, 492, 1200, 200);
+  image(background, 0, 0);
+
+  if (IS_PROPER)fill(0, 255, 0);
+  else fill(255, 0, 0);
+  rect(1055, 495, 39, 57);
+
+
+  textSize(20);
+  fill(0); 
+  text(NAME, 22, 543); 
+  text(SUB_NAME, 412, 543); 
+  text(NO, 596, 543); 
+  text(X_NAME, 660, 543); 
+  text(Y_NAME, 780, 543); 
+  textSize(9);
+  text(X_MAX, 898, 543); 
+  text(Y_MAX, 976, 543); 
+
+  //RIGHT MENU
+  textSize(20);
+  text("("+upper_left[0]+","+upper_left[1]+")", 1000, 345);
+  text("("+lower_right[0]+","+lower_right[1]+")", 1000, 473);
+  
+  fill(picked_color[0],picked_color[1],picked_color[2]);  stroke(picked_color[0],picked_color[1],picked_color[2]);
+  rect(1000,68,95,58);
+  
+  noFill();
+  stroke(0, 255, 0);
+  strokeWeight(5);
+  if (which_is_active==10)rect(1000, 3, 100, 60);
+  else if (which_is_active==11)rect(1000, 127, 100, 60);
+  else if (which_is_active==12)rect(1000, 188, 100, 60);
+  else if (which_is_active==13)rect(1000, 250, 100, 60);
+  else if (which_is_active==14)rect(1000, 370, 100, 60);
+  
+  //RIGHT SCREEN
+  strokeWeight(2);stroke(0,0,255);
+  rect(upper_left[0]+520,upper_left[1],lower_right[0]-upper_left[0],lower_right[1]-upper_left[1]);
+  extract_function_data();
+}
+
+//#################################################################################
+void copy_data() {
   String selection = "[";
   for (int i=0; i<100; i++) {
     selection += String.valueOf(data[i])+" ";
   }
   selection +="];";
-
   StringSelection toClipboard = new StringSelection(selection);
   Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
   clipboard.setContents(toClipboard, toClipboard);
 }
 void extract_function_data() {  
-  strokeWeight(4);
+  
+  strokeWeight(4);stroke(0);
+  
   float px_to_x=1.0f/(lower_right[0]-upper_left[0]);
   float px_to_y=1.0f/(lower_right[1]-upper_left[1]);
-
   for (float x=upper_left[0]; x<= lower_right[0]; x+=0.9) {
     float  y=0;
     for (y = upper_left[1]; y<= lower_right[1]; y+=0.1) {
       if (compare_color((int)x, (int)y)) {        
-        point(x+500, y);       
+        point(x+520, y);       
         data[(int)((100*(x-upper_left[0]))/(lower_right[0]-upper_left[0]))] = (lower_right[1]-y)*px_to_y;        
         break;
       }
     }
     if (y>lower_right[1]) {
       data[(int)((100*(x-upper_left[0]))/(lower_right[0]-upper_left[0]))] = -1;
-      point(x+500, y);
+      point(x+520, y);
     }
   }
 }
@@ -84,25 +140,37 @@ boolean compare_color(int x, int y) {
   return true;
 }
 //#################################################################################
-boolean color_pick= false;
-void keyPressed() {
-  if(key=='s')CIRCLE_DIAMETER=3;
-  else if(key=='d')CIRCLE_DIAMETER=20;
-  else if(key=='r')image(f1,0,0);
+void keyPressed() {  
+  int on_which_button=onWhichButton();
+  //VARIABLE NAMING  
+  if (on_which_button==1)NAME = apply_key(NAME, (int)key);
+  else if (on_which_button==2)SUB_NAME=apply_key(SUB_NAME, (int)key);
+  else if (on_which_button==3)NO=apply_key(NO, (int)key);
+  else if (on_which_button==4)X_NAME=apply_key(X_NAME, (int)key);
+  else if (on_which_button==5)Y_NAME=apply_key(Y_NAME, (int)key);
+  else if (on_which_button==6)X_MAX=apply_key(X_MAX, (int)key);
+  else if (on_which_button==7)Y_MAX=apply_key(Y_MAX, (int)key);
+  //DRAWING
+  if (key=='-')CIRCLE_DIAMETER=3;
+  else if (key=='+')CIRCLE_DIAMETER=20;
+  else if (key=='ğ')image(f1, 0, 0);
+  
+  calculate_data_name();
 }
 
 void mouseDragged() 
 {
-    if(which_is_active==11){
-      if(mouseX>500 || mouseY>500) return;
-      stroke(255);fill(255);
-      circle(mouseX, mouseY, CIRCLE_DIAMETER);
-    }
-    else if(which_is_active==12){
-      if(mouseX>500 || mouseY>500) return;
-      stroke(picked_color[0],picked_color[1],picked_color[2]);fill(picked_color[0],picked_color[1],picked_color[2]);
-      circle(mouseX, mouseY, CIRCLE_DIAMETER);
-    }
+  if (which_is_active==11) {
+    if (mouseX>500 || mouseY>500) return;
+    stroke(255);
+    fill(255);
+    circle(mouseX, mouseY, CIRCLE_DIAMETER);
+  } else if (which_is_active==12) {
+    if (mouseX>500 || mouseY>500) return;
+    stroke(picked_color[0], picked_color[1], picked_color[2]);
+    fill(picked_color[0], picked_color[1], picked_color[2]);
+    circle(mouseX, mouseY, CIRCLE_DIAMETER);
+  }
 }
 void mouseClicked() {
   int clicked_button=onWhichButton();  
@@ -113,30 +181,29 @@ void mouseClicked() {
   else if (clicked_button==13)which_is_active=13;
   else if (clicked_button==14)which_is_active=14;
   else if (clicked_button==8)IS_PROPER=!IS_PROPER;
+  else if (clicked_button==9)copy_data();
   //ON GRAPH
   else if (clicked_button==0) {
     if (which_is_active==10) {
       picked_color[0]=(int)red(get(mouseX, mouseY));
       picked_color[1]=(int)green(get(mouseX, mouseY));
       picked_color[2]=(int)blue(get(mouseX, mouseY));
-    }
-    else if(which_is_active==11){
-      if(mouseX>500 || mouseY>500) return;
-      stroke(255);fill(255);
+    } else if (which_is_active==11) {
+      if (mouseX>500 || mouseY>500) return;
+      stroke(255);
+      fill(255);
       circle(mouseX, mouseY, CIRCLE_DIAMETER);
-    }
-    else if(which_is_active==12){
-      if(mouseX>500 || mouseY>500) return;
-      stroke(picked_color[0],picked_color[1],picked_color[2]);fill(picked_color[0],picked_color[1],picked_color[2]);
+    } else if (which_is_active==12) {
+      if (mouseX>500 || mouseY>500) return;
+      stroke(picked_color[0], picked_color[1], picked_color[2]);
+      fill(picked_color[0], picked_color[1], picked_color[2]);
       circle(mouseX, mouseY, CIRCLE_DIAMETER);
-    }
-    else if(which_is_active==13){
-      if(mouseX>500 || mouseY>500) return;
+    } else if (which_is_active==13) {
+      if (mouseX>500 || mouseY>500) return;
       upper_left[0]=mouseX;
       upper_left[1]=mouseY;
-    }
-    else if(which_is_active==14){
-      if(mouseX>500 || mouseY>500) return;
+    } else if (which_is_active==14) {
+      if (mouseX>500 || mouseY>500) return;
       lower_right[0]=mouseX;
       lower_right[1]=mouseY;
     }
@@ -162,4 +229,46 @@ int onWhichButton() {
   else if (x>996&&y>247&&y<304)return 13;//UPPER LEFT
   else if (x>996&&y>370&&y<430)return 14;//LOWER RIGHT
   else return -1;
+}
+String apply_key(String text, int pressed_key) {
+  String return_string ="";
+  if (pressed_key==8) {
+    for (int i=0; i<(text.length()-1); i++) {
+      return_string += text.charAt(i);
+    }
+  } else {
+    return_string=text+String.valueOf((char)pressed_key);
+  }
+  return return_string;
+}
+
+void calculate_data_name(){
+  /*String DATA_NAME="";
+String NAME ="";
+String SUB_NAME= "";
+String NO= "";
+String X_NAME="";
+String Y_NAME="";
+String X_MAX="";
+String Y_MAX="";
+boolean IS_PROPER=false;*/
+DATA_NAME="";
+if(NAME=="")DATA_NAME+="X_";
+else DATA_NAME+= NAME+"_";
+
+if(SUB_NAME=="")DATA_NAME+="X_";
+else DATA_NAME+= SUB_NAME+"_";
+
+if(NO=="")DATA_NAME+="X_";
+else DATA_NAME+= NO+"_";
+
+if(X_NAME=="")DATA_NAME+="X_";
+else DATA_NAME+= X_NAME+"_";
+
+if(Y_NAME=="")DATA_NAME+="X_";
+else DATA_NAME+= Y_NAME+"_";
+
+if(IS_PROPER)DATA_NAME+="SI";
+else DATA_NAME+= X_NAME+"notSI";
+  
 }
