@@ -54,7 +54,7 @@ void painter() {
   //LOWER MENU
   fill(255); 
   stroke(255);
-  rect(510, 5, 700, 800);
+  rect(500, 5, 700, 800);
   rect(0, 492, 1200, 200);
   image(background, 0, 0);
 
@@ -95,16 +95,18 @@ void painter() {
   
   //RIGHT SCREEN
   strokeWeight(2);stroke(0,0,255);
-  rect(upper_left[0]+520,upper_left[1],lower_right[0]-upper_left[0],lower_right[1]-upper_left[1]);
+  rect(upper_left[0]+500,upper_left[1],lower_right[0]-upper_left[0],lower_right[1]-upper_left[1]);
   extract_function_data();
 }
 
 //#################################################################################
 void copy_data() {
-  String selection = "[";
+  String selection = DATA_NAME+" = [";
   for (int i=0; i<100; i++) {
     selection += String.valueOf(data[i])+" ";
   }
+  selection += X_MAX+ " ";
+  selection += Y_MAX+ " ";
   selection +="];";
   StringSelection toClipboard = new StringSelection(selection);
   Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -120,7 +122,7 @@ void extract_function_data() {
     float  y=0;
     for (y = upper_left[1]; y<= lower_right[1]; y+=0.1) {
       if (compare_color((int)x, (int)y)) {        
-        point(x+520, y);       
+        point(x+500, y);       
         data[(int)((100*(x-upper_left[0]))/(lower_right[0]-upper_left[0]))] = (lower_right[1]-y)*px_to_y;        
         break;
       }
