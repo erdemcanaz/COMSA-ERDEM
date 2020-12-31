@@ -1,8 +1,30 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.datatransfer.*;
-import javax.swing.*;
-import java.io.*;
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import java.awt.*; 
+import java.awt.event.*; 
+import java.awt.datatransfer.*; 
+import javax.swing.*; 
+import java.io.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class GRAPH_ANALYZER_V1 extends PApplet {
+
+
+
+
+
+
 
 
 PImage f1;
@@ -34,8 +56,8 @@ int which_is_active=-1;
 
 
 
-void setup() {
-  size(1100, 625);
+public void setup() {
+  
   background(255); 
   f1 = loadImage("func1.png");
   background = loadImage("background_transparent.png");
@@ -43,14 +65,14 @@ void setup() {
   image(background, 0, 0);
   calculate_data_name();
 }
-void draw() {  
+public void draw() {  
  
   painter();  
 }
 
 
 /////////
-void painter() {  
+public void painter() {  
   //LOWER MENU
   fill(255); 
   stroke(255);
@@ -100,7 +122,7 @@ void painter() {
 }
 
 //#################################################################################
-void copy_data() {
+public void copy_data() {
   String selection = DATA_NAME+" = [";
   for (int i=0; i<100; i++) {
     if(data[i]==-1){selection += "\'E\' ";}    
@@ -113,15 +135,15 @@ void copy_data() {
   Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
   clipboard.setContents(toClipboard, toClipboard);
 }
-void extract_function_data() {  
+public void extract_function_data() {  
   
   strokeWeight(4);stroke(0);
   
   float px_to_x=1.0f/(lower_right[0]-upper_left[0]);
   float px_to_y=1.0f/(lower_right[1]-upper_left[1]);
-  for (float x=upper_left[0]; x<= lower_right[0]; x+=0.9) {
+  for (float x=upper_left[0]; x<= lower_right[0]; x+=0.9f) {
     float  y=0;
-    for (y = upper_left[1]; y<= lower_right[1]; y+=0.1) {
+    for (y = upper_left[1]; y<= lower_right[1]; y+=0.1f) {
       if (compare_color((int)x, (int)y)) {        
         point(x+500, y);       
         data[(int)((100*(x-upper_left[0]))/(lower_right[0]-upper_left[0]))] = (lower_right[1]-y)*px_to_y;        
@@ -134,14 +156,14 @@ void extract_function_data() {
     }
   }
 }
-boolean compare_color(int x, int y) {
+public boolean compare_color(int x, int y) {
   if (abs(picked_color[0]-(int)red(get(x, y)))>color_accuracy)return false;
   if (abs(picked_color[1]-(int)green(get(x, y)))>color_accuracy)return false;
   if (abs(picked_color[2]-(int)blue(get(x, y)))>color_accuracy)return false;
   return true;
 }
 //#################################################################################
-void keyPressed() {  
+public void keyPressed() {  
   int on_which_button=onWhichButton();
   //VARIABLE NAMING  
   if (on_which_button==1)NAME = apply_key(NAME, (int)key);
@@ -159,7 +181,7 @@ void keyPressed() {
   calculate_data_name();
 }
 
-void mouseDragged() 
+public void mouseDragged() 
 {
   if (which_is_active==11) {
     if (mouseX>500 || mouseY>500) return;
@@ -173,7 +195,7 @@ void mouseDragged()
     circle(mouseX, mouseY, CIRCLE_DIAMETER);
   }
 }
-void mouseClicked() {
+public void mouseClicked() {
   int clicked_button=onWhichButton();  
   //MENU  
   if (clicked_button==10)which_is_active=10;
@@ -211,7 +233,7 @@ void mouseClicked() {
   }
 }
 
-int onWhichButton() {
+public int onWhichButton() {
   int x= mouseX;
   int y= mouseY;
   if (x<500&&y<500)return 0; //CLICK ON GRAPH
@@ -231,7 +253,7 @@ int onWhichButton() {
   else if (x>996&&y>370&&y<430)return 14;//LOWER RIGHT
   else return -1;
 }
-String apply_key(String text, int pressed_key) {
+public String apply_key(String text, int pressed_key) {
   String return_string =text;
   if (pressed_key==8) {
     return_string="";
@@ -244,7 +266,7 @@ String apply_key(String text, int pressed_key) {
   return return_string;
 }
 
-void calculate_data_name(){
+public void calculate_data_name(){
 
 DATA_NAME="";
 if(NAME=="")DATA_NAME+="X_";
@@ -267,4 +289,14 @@ else DATA_NAME+="notSI_";
 
 DATA_NAME+="UGFV0";
   
+}
+  public void settings() {  size(1100, 625); }
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "GRAPH_ANALYZER_V1" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }
